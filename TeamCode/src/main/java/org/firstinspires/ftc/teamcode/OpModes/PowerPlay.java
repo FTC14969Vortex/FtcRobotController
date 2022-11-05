@@ -64,17 +64,11 @@ public class PowerPlay extends LinearOpMode {
    @Override
    public void runOpMode() throws InterruptedException {
        //Init
-       initVuforia();
-       initTfod();
+       if(!initVuforia()) {throw new Error("Vuforia failed to init");}
+       if(!initTfod()) {throw new Error("Tfod failed to init");}
        robot.init(hardwareMap);
        if (tfod != null) {
            tfod.activate();
-           // The TensorFlow software will scale the input images from the camera to a lower resolution.
-           // This can result in lower detection accuracy at longer distances (> 55cm or 22").
-           // If your target is at distance greater than 50 cm (20") you can increase the magnification value
-           // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
-           // should be set to the value of the images used to create the TensorFlow Object Detection model
-           // (typically 16/9).
            tfod.setZoom(1.0, 16.0/9.0);
        }
 
@@ -115,20 +109,22 @@ public class PowerPlay extends LinearOpMode {
                        log(">","Starting the 'Collect' state");
                        robot.turnRobot(90);
                        robot.startDriveToPosition(4,2);
-                       //robot.useClaw();
-                       //robot.moveArmToTarget(1,3);
-                       //robot.moveArmToTarget(1,-3);
+                       robot.useClaw();
+                       robot.moveArmToTarget(1,3);
+                       robot.moveArmToTarget(1,-3);
                        stateMachine = "Move";
-                       //robot.turnRobot(270);
-                       //break;
+                       robot.turnRobot(90);
+                       break;
                    case "Move":
                        log(">","Starting the 'Move' state");
                        //Really just making up numbers here. Need to do some tests to detirmine actual distances
                        robot.startDriveToPosition(10,2);
                        robot.turnRobot(90);
                        robot.startDriveToPosition(10,2);
+                       robot.turnRobot(-90);
+                       robot.startDriveToPosition(1,2);
                        stateMachine = "Place";
-                       //break;
+                       break;
                    case "Place":
                        log(">","Starting the 'Place' state");
                       /*
@@ -154,10 +150,9 @@ public class PowerPlay extends LinearOpMode {
                        }
                        //Time to Extend the Arm
                        robot.moveArmToTarget(2, 10);
-                       //robot.useClaw();
-                       //robot.moveArmToTarget(2,0);
+                       robot.useClaw();
+                       robot.moveArmToTarget(2,0);
                        robot.raiseCrane(2,0);
-                       //Need to write retraction method
                        conesPlaced++;
                        if(conesPlaced >= quota) {
                            stateMachine = "Park";
@@ -165,12 +160,11 @@ public class PowerPlay extends LinearOpMode {
                        else {
                            stateMachine = "Collect";
                        }
-                       robot.turnRobot(90);
+                       robot.turnRobot(180);
                        robot.startDriveToPosition(10,3);
                        robot.turnRobot(90);
                        robot.startDriveToPosition(10,3);
-                       robot.turnRobot(90);
-                       //break;
+                       break;
                    case "Park":
                        log(">","Starting the 'Park' state. It should be returned to its starting point");
                        //Code to return to starting position
@@ -202,7 +196,7 @@ public class PowerPlay extends LinearOpMode {
                            default:
                                throw new Error("Invalid Parking Target");
                        }
-                       //break;
+                       break;
                }
            }
        }
@@ -228,7 +222,7 @@ public class PowerPlay extends LinearOpMode {
    /**
     * Initialize the Vuforia localization engine.
     */
-   private void initVuforia() {
+   private boolean initVuforia() {
        /*
         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
         */
@@ -239,12 +233,18 @@ public class PowerPlay extends LinearOpMode {
 
        //  Instantiate the Vuforia engine
        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+       if(vuforia != null) {
+        return true;
+       }
+       else {
+        return false;
+       }
    }
 
    /**
     * Initialize the TensorFlow Object Detection engine.
     */
-   private void initTfod() {
+   private boolean initTfod() {
        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
@@ -257,6 +257,12 @@ public class PowerPlay extends LinearOpMode {
        // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+       if(tfod != null) {
+        return true;
+       }
+       else {
+        return false;
+       }
    }
    void log(String caption, String message) {
      telemetry.addData(caption, message);
