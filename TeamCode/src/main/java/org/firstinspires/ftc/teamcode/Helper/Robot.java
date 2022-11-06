@@ -1,23 +1,24 @@
 package org.firstinspires.ftc.teamcode.Helper;
+        import static java.lang.Thread.sleep;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
+        import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+        import com.qualcomm.robotcore.hardware.CRServo;
+        import com.qualcomm.robotcore.hardware.DcMotor;
+        import com.qualcomm.robotcore.hardware.Servo;
+        import com.qualcomm.robotcore.hardware.DcMotorEx;
+        import com.qualcomm.robotcore.hardware.DistanceSensor;
+        import com.qualcomm.robotcore.hardware.HardwareMap;
+        import com.qualcomm.robotcore.util.ElapsedTime;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import java.util.concurrent.TimeUnit;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+        import com.qualcomm.hardware.bosch.BNO055IMU;
+        import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+        import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+        import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+        import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+        import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+        import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+        import java.util.concurrent.TimeUnit;
+        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
 public class Robot {
@@ -76,8 +77,13 @@ public class Robot {
 
 
     //
-    public void Robot() {
+    public void Robot() {}
 
+    public void useClaw() throws InterruptedException {
+        runtime.reset();
+        claw.setPosition(0.35);
+        sleep(1000);
+        claw.setPosition(0);
     }
 
     public enum MoveStep {
@@ -88,25 +94,29 @@ public class Robot {
 
     //private static LinearOpmode opModeObj;
 
-    public void init(HardwareMap ahwMap) throws InterruptedException {
+    public boolean init(HardwareMap ahwMap) throws InterruptedException {
 
         hwMap = ahwMap;
         //Init motors and servos
         FLMotor = hwMap.get(DcMotor.class, "FLMotor");
+        if(FLMotor == null) {return false;}
         BLMotor = hwMap.get(DcMotor.class, "BLMotor");
+        if(BLMotor == null) {return false;}
         FRMotor = hwMap.get(DcMotor.class, "FRMotor");
+        if(FRMotor == null) {return false;}
         BRMotor = hwMap.get(DcMotor.class, "BRMotor");
+        if(BRMotor == null) {return false;}
 
         //controller b
         intake = hwMap.get(DcMotor.class, "intake");
+        if(intake == null) {return false;}
         pulley = hwMap.get(DcMotor.class, "pulley");
+        if(pulley == null) {return false;}
         arm = hwMap.get(DcMotor.class, "arm");
-        carousel = hwMap.get(CRServo.class, "carousel");
+        if(arm == null) {return false;}
 
-        boxcover = hwMap.get(Servo.class, "boxcover");
-        capping = hwMap.get(Servo.class, "capping");
-        sIntake = hwMap.get(CRServo.class, "sIntake");
         claw = hwMap.get(Servo.class, "claw");
+        if(claw == null) {return false;}
 
 
 
@@ -129,10 +139,6 @@ public class Robot {
         pulley.setDirection(DcMotor.Direction.FORWARD);
         arm.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(DcMotor.Direction.FORWARD);
-        carousel.setDirection(CRServo.Direction.FORWARD);
-
-        boxcover.setDirection(Servo.Direction.FORWARD);
-        capping.setDirection(Servo.Direction.FORWARD);
         claw.setDirection(Servo.Direction.FORWARD);
 
         //Stop and reset encoder values.
@@ -190,11 +196,12 @@ public class Robot {
         TimeUnit.MILLISECONDS.sleep(100); //Changing modes again requires a delay
 
         imu.initialize(parameters);
+        return true;
 
     }
 
     //Init IMU
-    public void IMUinit(HardwareMap ahwMap) throws InterruptedException {
+    public boolean IMUinit(HardwareMap ahwMap) throws InterruptedException {
         imuHwMap = ahwMap;
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
@@ -227,6 +234,9 @@ public class Robot {
         TimeUnit.MILLISECONDS.sleep(100); //Changing modes again requires a delay
 
         imu.initialize(parameters);
+
+        if(imu != null) {return true;}
+        return false;
     }
 
 
@@ -276,7 +286,7 @@ public class Robot {
 
 
     //Accurately move left/right
-    public void startStrafeToPosition(double speed, int distance) {
+    public void startStrafeToPosition(double speed, double distance) {
         int newTargetF;
         int newTargetB;
         int avgFront = (this.FLMotor.getCurrentPosition() + this.BRMotor.getCurrentPosition()) / 2;
@@ -341,19 +351,9 @@ public class Robot {
 
 
     //Moves the arm to a specific target
-    public void moveArmToTarget(int barcode, double speed) {
+    public void moveArmToTarget(double speed, int target) {
         int timeout_ms = 1500;
-        int targetPosition=0;
-        int currentPosition = this.arm.getCurrentPosition();
-        if (barcode == 1) { // arm to the front
-            this.arm.setTargetPosition(-30);
-        }
-        else if (barcode == 2) { // arm in the middle
-            this.arm.setTargetPosition(-65);
-        }
-        else if (barcode == 3) { // arm at the back
-            this.arm.setTargetPosition(-120);
-        }
+        this.arm.setTargetPosition(target);
         // Turn on RUN_TO_POSITION
         this.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -361,9 +361,13 @@ public class Robot {
         runtime.reset();
         this.arm.setPower(Math.abs(speed));
 
-        while ((runtime.milliseconds() < timeout_ms) && (this.arm.isBusy())) {
-
-        }
+        while ((runtime.milliseconds() < timeout_ms) && (this.arm.isBusy())) {}
+    }
+    public void raiseCrane(double power, long time) throws InterruptedException {
+        runtime.reset();
+        intake.setPower(power);
+        sleep(time);
+        intake.setPower(0);
     }
 
     //Moves the pulley to a specific target.
@@ -396,8 +400,7 @@ public class Robot {
         // reset the timeout time and start motion
         this.pulley.setPower(Math.abs(speed));
 
-        while ((runtime.milliseconds() < timeout_ms) && (this.pulley.isBusy())) {
-        }
+        while ((runtime.milliseconds() < timeout_ms) && (this.pulley.isBusy())) {}
     }
 
 
@@ -419,8 +422,8 @@ public class Robot {
         float angleCurrent = angleStart;
         float direction = Math.signum(turnAngle);
 
-        double pwr = 0.3;
-
+        double pwr = 0.1;
+        double elapse = 0;
         while (Math.abs(angleCurrent - angleEnd) > 1) {
             FLMotor.setPower(-pwr * direction);
             FRMotor.setPower(pwr * direction);
@@ -428,13 +431,15 @@ public class Robot {
             BRMotor.setPower(pwr * direction);
             angle = Robot.imu.getAngularOrientation();
             angleCurrent = modAngle(angle.firstAngle);
-
+            if(elapse > 3000) {
+                break;
+            }
+            elapse++;
         }
     }
 
     // This will align to the with reference to the angle with that robot started
     // Ideally the start positon is either 360 or 0 -
-    //
 
     //Aligns the robot to be straight.
     public void alignStraight(double startAngle, double finalAngle, double power) {
