@@ -247,7 +247,7 @@ public class Robot {
         int avgLeft = (this.FLMotor.getCurrentPosition() + this.BLMotor.getCurrentPosition()) / 2;
         int avgRight = (this.FRMotor.getCurrentPosition() + this.BRMotor.getCurrentPosition()) / 2;
 
-        newTargetL = avgLeft + (int) (distance * COUNTS_PER_CM);
+        newTargetL = avgLeftx + (int) (distance * COUNTS_PER_CM);
         newTargetR = avgRight + (int) (distance * COUNTS_PER_CM);
         this.FLMotor.setTargetPosition(newTargetL);
         this.FRMotor.setTargetPosition(newTargetR);
@@ -413,29 +413,26 @@ public class Robot {
     }
 
     //Turns the robot
-    public void turnRobot(float turnAngle) {
-        org.firstinspires.ftc.robotcore.external.navigation.Orientation angle;
-        angle = Robot.imu.getAngularOrientation();
+    public boolean turnRobot(float turnAngle) {
+        //float turnAngle = 360 - turnangle;
+        Orientation angle = Robot.imu.getAngularOrientation();
 
         float angleStart = modAngle(angle.firstAngle);
         float angleEnd = modAngle(angleStart + turnAngle);
         float angleCurrent = angleStart;
         float direction = Math.signum(turnAngle);
 
-        double pwr = 0.1;
-        double elapse = 0;
+        double pwr = 0.3;
         while (Math.abs(angleCurrent - angleEnd) > 1) {
-            FLMotor.setPower(-pwr * direction);
-            FRMotor.setPower(pwr * direction);
-            BLMotor.setPower(-pwr * direction);
-            BRMotor.setPower(pwr * direction);
-            angle = Robot.imu.getAngularOrientation();
-            angleCurrent = modAngle(angle.firstAngle);
-            if(elapse > 3000) {
-                break;
-            }
-            elapse++;
+            FLMotor.setPower(pwr * direction);
+            FRMotor.setPower(-pwr * direction);
+            BLMotor.setPower(pwr * direction);
+            BRMotor.setPower(-pwr * direction);
+            angleCurrent = modAngle(Robot.imu.getAngularOrientation().firstAngle);
         }
+        stopDriveMotors();
+        return true;
+        //throw new Error("Exited loop");
     }
 
     // This will align to the with reference to the angle with that robot started
