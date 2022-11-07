@@ -21,12 +21,10 @@ public class PowerPlay extends LinearOpMode {
 
     public String stateMachine = "Move";
     /*
-    1: Collect[Cone]
-    2: Move[to Pole]
-    3: Place[Cone]
+    Move[to Pole]
+    Place[Cone]
     (repeat 1-3 as many times as possible)
-    4: Go[to Signal]
-    5: Park
+    Park
      */
     public int conesPlaced = 0;
     public int quota = 3;
@@ -79,7 +77,7 @@ public class PowerPlay extends LinearOpMode {
         waitForStart();
         log(">", "Here they come");
         while (opModeIsActive()) {
-            log(">","State changing");
+         //  log(">","State changing");
             switch(stateMachine) {
                 case "Detect":
                     log(">","Starting the 'Detect' state");
@@ -113,13 +111,15 @@ public class PowerPlay extends LinearOpMode {
                 case "Move":
                     log(">","Starting the 'Move' state");
                     //Really just making up numbers here. Need to do some tests to detirmine actual distances
+                    //robot.startDriveToPosition(0.3,0.6);
                     robot.turnRobot(45);
-                    Orientation currentAngle = Robot.imu.getAngularOrientation();
-                    //sleep(200);
-                    stateMachine = "Place";
+                    sleep(200);
+                    telemetry.addData(">", Robot.imu.getAngularOrientation());
+                    telemetry.update();
+                    stateMachine = "Park";
                     break;
                 case "Place":
-                    log(">","Starting the 'Place' state");
+                   // log(">","Starting the 'Place' state");
                       /*
                       Low
                       Med
@@ -157,12 +157,14 @@ public class PowerPlay extends LinearOpMode {
                 case "Park":
                     log(">","Starting the 'Park' state. It should be returned to its starting point");
                     robot.turnRobot(-45);
-                    robot.startDriveToPosition(0.5,0.4);
+                    robot.startDriveToPosition(0.5,100);
+                    sleep(3000);
                     switch(parkingTarget) {
                         case 0:
                             runtime.reset();
                             timeout_ms = 3000;
-                            robot.startStrafeToPosition(0.3,0.9);
+                            robot.turnRobot(-90);
+                            robot.startDriveToPosition(0.5,100);
                             while(opModeIsActive() && (runtime.milliseconds() < timeout_ms) && robot.FLMotor.isBusy() && robot.FRMotor.isBusy()) {};
                             robot.stopDriveMotors();
                             sleep(300);
@@ -173,7 +175,8 @@ public class PowerPlay extends LinearOpMode {
                         case 2:
                             runtime.reset();
                             timeout_ms = 3000;
-                            robot.startStrafeToPosition(0.3, -0.9);
+                            robot.turnRobot(90);
+                            robot.startDriveToPosition(0.5, 100);
                             while(opModeIsActive() && (runtime.milliseconds() < timeout_ms) && robot.FLMotor.isBusy() && robot.FRMotor.isBusy()) {};
                             robot.stopDriveMotors();
                             sleep(300);
