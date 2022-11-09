@@ -188,24 +188,6 @@ public class PowerPlay extends LinearOpMode {
             }
         }
     }
-    public PowerPlay toValhalla() {
-        log(">", "Fires are rising and the bells are ringing");
-        sleep(100);
-        log(">", "Glory take us into Odin's halls");
-        sleep(100);
-        log(">", "Golden glimmer and the sound of singing");
-        sleep(100);
-        log(">", "Oh-ho-oh, the echoes of eternity");
-        sleep(100);
-        log(">", "Oh-ho-oh, Valhalla Calling Me");
-        sleep(100);
-        log(">", "Oh-ho-oh, to pluck the strings of destiny");
-        sleep(100);
-        log(">", "VALHALLA CALLING ME");
-        sleep(50);
-        robot.startDriveToPosition(69,420);
-        return this;
-    }
 
     /**
      * Initialize the Vuforia localization engine.
