@@ -214,9 +214,8 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad1.a) {
-                telemetry.addData("Angle Start", Robot.imu.getAngularOrientation());
                 robot.turnRobot(90);
-                telemetry.addData("Angle End", Robot.imu.getAngularOrientation());
+                telemetry.addData(">", robot.modAngle(-90));
             }
 
             // telemetry
