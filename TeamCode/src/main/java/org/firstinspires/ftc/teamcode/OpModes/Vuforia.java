@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.Helper.Robot;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Vuforia_test", group = "Vuforia")
+@Autonomous(name = "custom model", group = "Vuforia")
 
 public class Vuforia extends LinearOpMode {
 
@@ -43,8 +43,8 @@ public class Vuforia extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-//    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-    private static final String TFOD_MODEL_ASSET = "22-23Model.tflite";
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    //  private static final String TFOD_MODEL_FILE = "modelvortex.tflite";
     private static final String[] LABELS = {
             "VO",
             "RT",
@@ -148,6 +148,7 @@ public class Vuforia extends LinearOpMode {
                     }
                 }
 
+                parkingTarget = 0; // Skip over the parking code.
                 if (parkingTarget == 1) {
                     runtime.reset();
                     timeout_ms = 3000;
@@ -230,8 +231,8 @@ public class Vuforia extends LinearOpMode {
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        //tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+       // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 }
 

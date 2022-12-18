@@ -172,7 +172,7 @@ public class Robot {
 
         //Need to be in CONFIG mode to write to registers
         imu.write8(BNO055IMU.Register.OPR_MODE,BNO055IMU.SensorMode.CONFIG.bVal & 0x0F);
-        byte AXIS_MAP_CONFIG_BYTE = 0x6; //This is what to write to the AXIS_MAP_CONFIG register to swap x and z axes
+        byte AXIS_MAP_CONFIG_BYTE = 0x18; //This is what to write to the AXIS_MAP_CONFIG register to swap x and z axes
         byte AXIS_MAP_SIGN_BYTE = 0x1; //This is what to write to the AXIS_MAP_SIGN register to negate the z axis
         //Need to be in CONFIG mode to write to registers
         imu.write8(BNO055IMU.Register.OPR_MODE,BNO055IMU.SensorMode.CONFIG.bVal & 0x0F);
@@ -209,7 +209,7 @@ public class Robot {
 
         //Need to be in CONFIG mode to write to registers
         imu.write8(BNO055IMU.Register.OPR_MODE,BNO055IMU.SensorMode.CONFIG.bVal & 0x0F);
-        byte AXIS_MAP_CONFIG_BYTE = 0x6; //This is what to write to the AXIS_MAP_CONFIG register to swap x and z axes
+        byte AXIS_MAP_CONFIG_BYTE = 0x18; //This is what to write to the AXIS_MAP_CONFIG register to swap x and z axes
         byte AXIS_MAP_SIGN_BYTE = 0x1; //This is what to write to the AXIS_MAP_SIGN register to negate the z axis
         //Need to be in CONFIG mode to write to registers
         imu.write8(BNO055IMU.Register.OPR_MODE,BNO055IMU.SensorMode.CONFIG.bVal & 0x0F);
@@ -415,11 +415,11 @@ public class Robot {
         angle = Robot.imu.getAngularOrientation();
 
         float angleStart = modAngle(angle.firstAngle);
-        float angleEnd = modAngle(angleStart + turnAngle);
         float angleCurrent = angleStart;
-        float direction = Math.signum(turnAngle);
+        float direction = (Math.signum(turnAngle));
+        float angleEnd = modAngle(angleStart + (direction*turnAngle));
 
-        double pwr = 0.3;
+        double pwr = -0.3;
 
         while (Math.abs(angleCurrent - angleEnd) > 1) {
             FLMotor.setPower(-pwr * direction);
