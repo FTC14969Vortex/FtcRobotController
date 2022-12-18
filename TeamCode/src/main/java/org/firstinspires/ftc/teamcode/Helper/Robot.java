@@ -76,9 +76,7 @@ public class Robot {
 
 
     //
-    public void Robot() {
-
-    }
+    public void Robot() {}
 
     public enum MoveStep {
         yaxix, xaxis, turn, stop
