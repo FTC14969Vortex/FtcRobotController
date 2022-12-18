@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.io.File;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -43,9 +44,9 @@ public class Vuforia extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-
-    private static final String TFOD_MODEL_FILE = "PowerPlay.tflite";
     private static final String tfodModel = "playPower.tflite";
+    private static final String tfodPath = "/sdcard/FIRST/tflitemodels/" + tfodModel;
+
 
     final String[] vortexLabels = {
             "VO",
@@ -114,12 +115,15 @@ public class Vuforia extends LinearOpMode {
         }
 
         /** Wait for the game to begin */
-        telemetry.addData(">", "Press Play to start op mode");
+        File f = new File(tfodPath);
+        if(f.exists()) { telemetry.addData(">", tfodPath + " exists"); }
+        else {telemetry.addData(">", tfodPath + " does not exist"); }
+        telemetry.addData(">", "Good luck!");
         telemetry.update();
         waitForStart();
 
         if (opModeIsActive()) {
-            while (opModeIsActive()) {
+            while (opModeIsActive() && !isStopRequested()) {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
@@ -135,6 +139,7 @@ public class Vuforia extends LinearOpMode {
                             double width = Math.abs(recognition.getRight() - recognition.getLeft());
                             double height = Math.abs(recognition.getTop() - recognition.getBottom());
                             String objectLabel = recognition.getLabel();
+
 
                             if (objectLabel == "1 Bolt") {
                                 parkingTarget = 1;
@@ -229,14 +234,15 @@ public class Vuforia extends LinearOpMode {
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
+
         switch(tfodModel) {
             case "modelvortex.tflite":
-                tfod.loadModelFromAsset(tfodModel, vortexLabels);
+                tfod.loadModelFromFile(tfodPath, vortexLabels);
                 break;
             case "playPower.tflite":
-                tfod.loadModelFromAsset(tfodModel, LABELS);
+                tfod.loadModelFromFile(tfodPath, LABELS);
             default:
-                throw new Error("That isn't a valid TFLite model. Maybe check if it's uploaded, or if you made a typo?");
+            //    throw new Error("That isn't a valid TFLite model. Maybe check if it's uploaded, or if you made a typo?");
         }
     }
 }
