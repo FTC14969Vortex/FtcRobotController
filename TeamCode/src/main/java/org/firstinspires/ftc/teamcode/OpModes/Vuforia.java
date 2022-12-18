@@ -43,12 +43,19 @@ public class Vuforia extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-//    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-    private static final String TFOD_MODEL_ASSET = "22-23Model.tflite";
-    private static final String[] LABELS = {
+
+    private static final String TFOD_MODEL_FILE = "PowerPlay.tflite";
+    private static final String tfodModel = "playPower.tflite";
+
+    final String[] vortexLabels = {
             "VO",
             "RT",
             "EX"
+    };
+    final String[] LABELS = {
+            "1 Bolt",
+            "2 Bulb",
+            "3 Panel"
     };
 
     /*
@@ -147,54 +154,44 @@ public class Vuforia extends LinearOpMode {
                         telemetry.update();
                     }
                 }
+                //Skip the parking step
+                parkingTarget = 0;
+                switch(parkingTarget) {
+                    case 1:
+                        runtime.reset();
+                        timeout_ms = 3000;
+                        robot.startDriveToPosition(0.3, 90);
+                        while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                        robot.stopDriveMotors();
+                        sleep(100);
 
-                if (parkingTarget == 1) {
-                    runtime.reset();
-                    timeout_ms = 3000;
-                    robot.startDriveToPosition(0.3, 90);
-                    while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
+                        runtime.reset();
+                        timeout_ms = 3000;
+                        robot.startStrafeToPosition(0.3, -60);
+                        while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                        robot.stopDriveMotors();
+                        break;
+                    case 2:
+                        runtime.reset();
+                        timeout_ms = 3000;
+                        robot.startDriveToPosition(0.3, 90);
+                        while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                        robot.stopDriveMotors();
+                        break;
+                    case 3:
+                        runtime.reset();
+                        timeout_ms = 3000;
+                        robot.startDriveToPosition(0.3, 90);
+                        while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                        robot.stopDriveMotors();
+                        sleep(100);
 
-                    }
-                    robot.stopDriveMotors();
-                    sleep(100);
-
-                    runtime.reset();
-                    timeout_ms = 3000;
-                    robot.startStrafeToPosition(0.3, -60);
-                    while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
-
-                    }
-                    robot.stopDriveMotors();
-                    break;
-                }
-                if (parkingTarget == 2) {
-                    runtime.reset();
-                    timeout_ms = 3000;
-                    robot.startDriveToPosition(0.3, 90);
-                    while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
-
-                    }
-                    robot.stopDriveMotors();
-                    break;
-                }
-                if (parkingTarget == 3) {
-                    runtime.reset();
-                    timeout_ms = 3000;
-                    robot.startDriveToPosition(0.3, 90);
-                    while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
-
-                    }
-                    robot.stopDriveMotors();
-                    sleep(100);
-
-                    runtime.reset();
-                    timeout_ms = 3000;
-                    robot.startStrafeToPosition(0.3, 60);
-                    while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
-
-                    }
-                    robot.stopDriveMotors();
-                    break;
+                        runtime.reset();
+                        timeout_ms = 3000;
+                        robot.startStrafeToPosition(0.3, 60);
+                        while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                        robot.stopDriveMotors();
+                        break;
                 }
             }
         }
@@ -214,6 +211,8 @@ public class Vuforia extends LinearOpMode {
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+
     }
 
     /**
@@ -230,8 +229,15 @@ public class Vuforia extends LinearOpMode {
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        //tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+        switch(tfodModel) {
+            case "modelvortex.tflite":
+                tfod.loadModelFromAsset(tfodModel, vortexLabels);
+                break;
+            case "playPower.tflite":
+                tfod.loadModelFromAsset(tfodModel, LABELS);
+            default:
+                throw new Error("That isn't a valid TFLite model. Maybe check if it's uploaded, or if you made a typo?");
+        }
     }
 }
 
