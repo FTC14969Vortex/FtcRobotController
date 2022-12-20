@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.io.File;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -43,12 +44,19 @@ public class Vuforia extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-//    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-    private static final String TFOD_MODEL_ASSET = "22-23Model.tflite";
-    private static final String[] LABELS = {
+    private static final String tfodModel = "playPower.tflite";
+    private static final String tfodPath = "/sdcard/FIRST/tflitemodels/" + tfodModel;
+
+
+    final String[] vortexLabels = {
             "VO",
             "RT",
             "EX"
+    };
+    final String[] LABELS = {
+            "1 Bolt",
+            "2 Bulb",
+            "3 Panel"
     };
 
     /*
@@ -107,12 +115,15 @@ public class Vuforia extends LinearOpMode {
         }
 
         /** Wait for the game to begin */
-        telemetry.addData(">", "Press Play to start op mode");
+        File f = new File(tfodPath);
+        if(f.exists()) { telemetry.addData(">", tfodPath + " exists"); }
+        else {telemetry.addData(">", tfodPath + " does not exist"); }
+        telemetry.addData(">", "Good luck!");
         telemetry.update();
         waitForStart();
 
         if (opModeIsActive()) {
-            while (opModeIsActive()) {
+            while (opModeIsActive() && !isStopRequested()) {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
@@ -128,12 +139,28 @@ public class Vuforia extends LinearOpMode {
                             double width = Math.abs(recognition.getRight() - recognition.getLeft());
                             double height = Math.abs(recognition.getTop() - recognition.getBottom());
                             String objectLabel = recognition.getLabel();
+                            String[] detectLabels = new String[2];
+                            int i = 0;
+                            switch(tfodModel) {
+                                case "modelvortex.tflite":
+                                    for (String label : vortexLabels) {
+                                        detectLabels[i] = label;
+                                        i++;
+                                    }
+                                break;
 
-                            if (objectLabel == "1 Bolt") {
+                                case "playPower.tflite":
+                                    for (String label : LABELS) {
+                                        detectLabels[i] = label;
+                                        i++;
+                                    }
+                                    break;
+                            }
+                            if (objectLabel == detectLabels[0]) {
                                 parkingTarget = 1;
-                            } else if (objectLabel == "2 Bulb") {
+                            } else if (objectLabel == detectLabels[1]) {
                                 parkingTarget = 2;
-                            } else if (objectLabel == "3 Panel") {
+                            } else if (objectLabel == detectLabels[2]) {
                                 parkingTarget = 3;
                             }
 
@@ -147,54 +174,44 @@ public class Vuforia extends LinearOpMode {
                         telemetry.update();
                     }
                 }
+                //Skip the parking step
+                parkingTarget = 0;
+                switch(parkingTarget) {
+                    case 1:
+                        runtime.reset();
+                        timeout_ms = 3000;
+                        robot.startDriveToPosition(0.3, 90);
+                        while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                        robot.stopDriveMotors();
+                        sleep(100);
 
-                if (parkingTarget == 1) {
-                    runtime.reset();
-                    timeout_ms = 3000;
-                    robot.Drive(0.3, 90);
-                    while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
+                        runtime.reset();
+                        timeout_ms = 3000;
+                        robot.startStrafeToPosition(0.3, -60);
+                        while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                        robot.stopDriveMotors();
+                        break;
+                    case 2:
+                        runtime.reset();
+                        timeout_ms = 3000;
+                        robot.startDriveToPosition(0.3, 90);
+                        while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                        robot.stopDriveMotors();
+                        break;
+                    case 3:
+                        runtime.reset();
+                        timeout_ms = 3000;
+                        robot.startDriveToPosition(0.3, 90);
+                        while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                        robot.stopDriveMotors();
+                        sleep(100);
 
-                    }
-                    robot.stopDriveMotors();
-                    sleep(100);
-
-                    runtime.reset();
-                    timeout_ms = 3000;
-                    robot.Strafe(0.3, -60);
-                    while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
-
-                    }
-                    robot.stopDriveMotors();
-                    break;
-                }
-                if (parkingTarget == 2) {
-                    runtime.reset();
-                    timeout_ms = 3000;
-                    robot.Drive(0.3, 90);
-                    while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
-
-                    }
-                    robot.stopDriveMotors();
-                    break;
-                }
-                if (parkingTarget == 3) {
-                    runtime.reset();
-                    timeout_ms = 3000;
-                    robot.Drive(0.3, 90);
-                    while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
-
-                    }
-                    robot.stopDriveMotors();
-                    sleep(100);
-
-                    runtime.reset();
-                    timeout_ms = 3000;
-                    robot.Strafe(0.3, 60);
-                    while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
-
-                    }
-                    robot.stopDriveMotors();
-                    break;
+                        runtime.reset();
+                        timeout_ms = 3000;
+                        robot.startStrafeToPosition(0.3, 60);
+                        while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                        robot.stopDriveMotors();
+                        break;
                 }
             }
         }
@@ -214,6 +231,8 @@ public class Vuforia extends LinearOpMode {
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+
     }
 
     /**
@@ -230,8 +249,16 @@ public class Vuforia extends LinearOpMode {
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        //tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+
+        switch(tfodModel) {
+            case "modelvortex.tflite":
+                tfod.loadModelFromFile(tfodPath, vortexLabels);
+                break;
+            case "playPower.tflite":
+                tfod.loadModelFromFile(tfodPath, LABELS);
+            default:
+            //    throw new Error("That isn't a valid TFLite model. Maybe check if it's uploaded, or if you made a typo?");
+        }
     }
 }
 

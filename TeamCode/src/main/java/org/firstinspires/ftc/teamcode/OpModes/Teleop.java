@@ -211,6 +211,11 @@ public class Teleop extends LinearOpMode {
                 robot.claw.setPosition(0);
             }
 
+            if (gamepad1.a) {
+                robot.turnRobot(90);
+                telemetry.addData(">", robot.modAngle(-90));
+            }
+
             // telemetry
             telemetry.addData("Angle", "%f ", robot.getRobotAngle());
             telemetry.addData("ARM Current position", robot.arm.getCurrentPosition());
@@ -219,8 +224,6 @@ public class Teleop extends LinearOpMode {
             telemetry.update();
             idle();
 
-
         }
-
     }
 }
