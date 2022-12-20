@@ -180,35 +180,35 @@ public class Vuforia extends LinearOpMode {
                     case 1:
                         runtime.reset();
                         timeout_ms = 3000;
-                        robot.startDriveToPosition(0.3, 90);
+                        robot.Drive(0.3, 90);
                         while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
                         robot.stopDriveMotors();
                         sleep(100);
 
                         runtime.reset();
                         timeout_ms = 3000;
-                        robot.startStrafeToPosition(0.3, -60);
+                        robot.Strafe(0.3, -60);
                         while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
                         robot.stopDriveMotors();
                         break;
                     case 2:
                         runtime.reset();
                         timeout_ms = 3000;
-                        robot.startDriveToPosition(0.3, 90);
+                        robot.Drive(0.3, 90);
                         while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
                         robot.stopDriveMotors();
                         break;
                     case 3:
                         runtime.reset();
                         timeout_ms = 3000;
-                        robot.startDriveToPosition(0.3, 90);
+                        robot.Drive(0.3, 90);
                         while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
                         robot.stopDriveMotors();
                         sleep(100);
 
                         runtime.reset();
                         timeout_ms = 3000;
-                        robot.startStrafeToPosition(0.3, 60);
+                        robot.Strafe(0.3, 60);
                         while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
                         robot.stopDriveMotors();
                         break;
