@@ -151,7 +151,7 @@ public class Vuforia extends LinearOpMode {
                 if (parkingTarget == 1) {
                     runtime.reset();
                     timeout_ms = 3000;
-                    robot.startDriveToPosition(0.3, 90);
+                    robot.Drive(0.3, 90);
                     while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
 
                     }
@@ -160,7 +160,7 @@ public class Vuforia extends LinearOpMode {
 
                     runtime.reset();
                     timeout_ms = 3000;
-                    robot.startStrafeToPosition(0.3, -60);
+                    robot.Strafe(0.3, -60);
                     while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
 
                     }
@@ -170,7 +170,7 @@ public class Vuforia extends LinearOpMode {
                 if (parkingTarget == 2) {
                     runtime.reset();
                     timeout_ms = 3000;
-                    robot.startDriveToPosition(0.3, 90);
+                    robot.Drive(0.3, 90);
                     while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
 
                     }
@@ -180,7 +180,7 @@ public class Vuforia extends LinearOpMode {
                 if (parkingTarget == 3) {
                     runtime.reset();
                     timeout_ms = 3000;
-                    robot.startDriveToPosition(0.3, 90);
+                    robot.Drive(0.3, 90);
                     while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
 
                     }
@@ -189,7 +189,7 @@ public class Vuforia extends LinearOpMode {
 
                     runtime.reset();
                     timeout_ms = 3000;
-                    robot.startStrafeToPosition(0.3, 60);
+                    robot.Strafe(0.3, 60);
                     while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {
 
                     }

@@ -167,6 +167,10 @@ public class Teleop extends LinearOpMode {
                 robot.arm.setPower(0);
             }
 
+            if(gamepad1.a) {
+                robot.turnRobot(90);
+            }
+
             while (gamepad2.right_trigger>0){
                 robot.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 robot.arm.setPower(0.6);
@@ -198,12 +202,6 @@ public class Teleop extends LinearOpMode {
              * Purpose:
              * Spin the carousel and deliver the duck for red side
              */
-            if (gamepad2.x) {
-                robot.startDriveToPosition(0.5, 50);
-                robot.startStrafeToPosition(0.5, 50);
-                robot.startDriveToPosition(0.5, -50);
-                robot.startStrafeToPosition(0.5, -50);
-            }
 
             /**
              * Purpose:

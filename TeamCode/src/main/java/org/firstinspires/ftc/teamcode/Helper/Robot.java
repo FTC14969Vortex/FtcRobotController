@@ -18,12 +18,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import java.util.concurrent.TimeUnit;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import java.util.*;
 
 
 public class Robot {
 
 
     private ElapsedTime runtime = new ElapsedTime();
+
+    double timeout_ms = 0;
 
     //Init Motors
     public DcMotor FLMotor = null;
@@ -40,6 +43,11 @@ public class Robot {
     public Servo capping;
     public CRServo sIntake;
     public Servo claw;
+
+    public int robotX = 0;
+    public int robotY = 0;
+
+    public int[] Location = {robotX,robotY};
 
     //IMU
     public static BNO055IMU imu;
@@ -172,7 +180,7 @@ public class Robot {
 
         //Need to be in CONFIG mode to write to registers
         imu.write8(BNO055IMU.Register.OPR_MODE,BNO055IMU.SensorMode.CONFIG.bVal & 0x0F);
-        byte AXIS_MAP_CONFIG_BYTE = 0x6; //This is what to write to the AXIS_MAP_CONFIG register to swap x and z axes
+        byte AXIS_MAP_CONFIG_BYTE = 0x18; //This is what to write to the AXIS_MAP_CONFIG register to swap y and z axes
         byte AXIS_MAP_SIGN_BYTE = 0x1; //This is what to write to the AXIS_MAP_SIGN register to negate the z axis
         //Need to be in CONFIG mode to write to registers
         imu.write8(BNO055IMU.Register.OPR_MODE,BNO055IMU.SensorMode.CONFIG.bVal & 0x0F);
@@ -230,36 +238,102 @@ public class Robot {
     }
 
 
-    //Accurately move Forward/Backward
-    public void startDriveToPosition(double speed, double distance) {
-        int newTargetL;
-        int newTargetR;
-        int avgLeft = (this.FLMotor.getCurrentPosition() + this.BLMotor.getCurrentPosition()) / 2;
-        int avgRight = (this.FRMotor.getCurrentPosition() + this.BRMotor.getCurrentPosition()) / 2;
+    public void Drive(double speed, int distance) {
 
-        newTargetL = avgLeft + (int) (distance * COUNTS_PER_CM);
-        newTargetR = avgRight + (int) (distance * COUNTS_PER_CM);
-        this.FLMotor.setTargetPosition(newTargetL);
-        this.FRMotor.setTargetPosition(newTargetR);
-        this.BLMotor.setTargetPosition(newTargetL);
-        this.BRMotor.setTargetPosition(newTargetR);
+        runtime.reset();
+        timeout_ms = 10000;
 
+        robotY += distance;
+        Location[1] = robotY;
 
-        // Turn On RUN_TO_POSITION
+        int targetFL;
+        int targetFR;
+        int targetBR;
+        int targetBL;
+
+        int FLPos = this.FLMotor.getCurrentPosition();
+        int FRPos = this.FRMotor.getCurrentPosition();
+        int BLPos = this.BLMotor.getCurrentPosition();
+        int BRPos = this.BRMotor.getCurrentPosition();
+
+        targetFR = FRPos + (int) (distance * COUNTS_PER_CM);
+        targetBR = BRPos + (int) (distance * COUNTS_PER_CM);
+        targetFL = FLPos + (int) (distance * COUNTS_PER_CM);
+        targetBL = BLPos + (int) (distance * COUNTS_PER_CM);
+
+        //Set motor targets
+        this.FLMotor.setTargetPosition(targetFL);
+        this.BLMotor.setTargetPosition(targetBL);
+        this.FRMotor.setTargetPosition(targetFR);
+        this.BRMotor.setTargetPosition(targetBR);
+
+        //set the mode to go to the target position
         this.FLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.FRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.BLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.BRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // Set the start motion.
+        //Set the power of the motor.
         FLMotor.setPower(speed);
         FRMotor.setPower(speed);
         BLMotor.setPower(speed);
         BRMotor.setPower(speed);
 
+        while ((runtime.milliseconds() < timeout_ms) && (this.FLMotor.isBusy() && this.FRMotor.isBusy())) {
+
+        }
+        this.stopDriveMotors();
     }
 
-    //Stop the motors for drivetrain
+    public void Strafe(double speed, int distance) {
+
+        robotX += distance;
+
+        runtime.reset();
+        timeout_ms = 10000;
+
+        robotX += distance;
+        Location[0] = robotX;
+
+        int targetFL;
+        int targetFR;
+        int targetBR;
+        int targetBL;
+
+        int FLPos = this.FLMotor.getCurrentPosition();
+        int FRPos = this.FRMotor.getCurrentPosition();
+        int BLPos = this.BLMotor.getCurrentPosition();
+        int BRPos = this.BRMotor.getCurrentPosition();
+
+        targetFR = FRPos - (int) (distance * COUNTS_PER_CM);
+        targetBR = BRPos + (int) (distance * COUNTS_PER_CM);
+        targetFL = FLPos + (int) (distance * COUNTS_PER_CM);
+        targetBL = BLPos - (int) (distance * COUNTS_PER_CM);
+
+        //Set motor targets
+        this.FLMotor.setTargetPosition(targetFL);
+        this.BLMotor.setTargetPosition(targetBL);
+        this.FRMotor.setTargetPosition(targetFR);
+        this.BRMotor.setTargetPosition(targetBR);
+
+        //set the mode to go to the target position
+        this.FLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.FRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.BLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.BRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //Set the power of the motor.
+        FLMotor.setPower(speed);
+        FRMotor.setPower(speed);
+        BLMotor.setPower(speed);
+        BRMotor.setPower(speed);
+
+        while ((runtime.milliseconds() < timeout_ms) && (this.FLMotor.isBusy() && this.FRMotor.isBusy())) {
+
+        }
+        this.stopDriveMotors();
+    }
+
     public void stopDriveMotors(){
         // Stop all motion;
         this.FLMotor.setPower(0);
@@ -274,33 +348,10 @@ public class Robot {
         this.BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-
-    //Accurately move left/right
-    public void startStrafeToPosition(double speed, int distance) {
-        int newTargetF;
-        int newTargetB;
-        int avgFront = (this.FLMotor.getCurrentPosition() + this.BRMotor.getCurrentPosition()) / 2;
-        int avgBack = (this.BLMotor.getCurrentPosition() + this.FRMotor.getCurrentPosition()) / 2;
-        newTargetF = avgFront + (int) (distance * COUNTS_PER_CM);
-        newTargetB = avgBack - (int) (distance * COUNTS_PER_CM);
-        this.FLMotor.setTargetPosition(newTargetF);
-        this.FRMotor.setTargetPosition(newTargetB);
-        this.BLMotor.setTargetPosition(newTargetB);
-        this.BRMotor.setTargetPosition(newTargetF);
-
-        // Turn On RUN_TO_POSITION
-        this.FLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.FRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.BLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.BRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // reset the timeout time and start motion.
-
-        FLMotor.setPower(speed);
-        FRMotor.setPower(speed);
-        BLMotor.setPower(speed);
-        BRMotor.setPower(speed);
-
+    public void DriveToPosition(double Speed, int distX, int distY) {
+        this.Drive(Speed, distY);
+        this.Strafe(Speed, distX);
+        System.out.println(Arrays.toString(Location));
     }
 
     //Turns a wheel which we used to turn the carousel
@@ -370,7 +421,6 @@ public class Robot {
     public void movePulleyToTarget(int height, double speed) {
         runtime.reset();
         int timeout_ms = 1000;
-        int currentPosition = this.pulley.getCurrentPosition();
 
         //level 3 height
         if (height == 3) {
@@ -394,7 +444,7 @@ public class Robot {
         this.pulley.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // reset the timeout time and start motion
-        this.pulley.setPower(Math.abs(speed));
+        this.pulley.setPower(speed);
 
         while ((runtime.milliseconds() < timeout_ms) && (this.pulley.isBusy())) {
         }
@@ -419,7 +469,8 @@ public class Robot {
         float angleCurrent = angleStart;
         float direction = Math.signum(turnAngle);
 
-        double pwr = 0.3;
+        double pwr = -0.3;
+
 
         while (Math.abs(angleCurrent - angleEnd) > 1) {
             FLMotor.setPower(-pwr * direction);
