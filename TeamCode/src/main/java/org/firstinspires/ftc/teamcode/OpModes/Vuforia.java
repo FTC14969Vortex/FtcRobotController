@@ -139,13 +139,28 @@ public class Vuforia extends LinearOpMode {
                             double width = Math.abs(recognition.getRight() - recognition.getLeft());
                             double height = Math.abs(recognition.getTop() - recognition.getBottom());
                             String objectLabel = recognition.getLabel();
+                            String[] detectLabels = new String[2];
+                            int i = 0;
+                            switch(tfodModel) {
+                                case "modelvortex.tflite":
+                                    for (String label : vortexLabels) {
+                                        detectLabels[i] = label;
+                                        i++;
+                                    }
+                                break;
 
-
-                            if (objectLabel == "1 Bolt") {
+                                case "playPower.tflite":
+                                    for (String label : LABELS) {
+                                        detectLabels[i] = label;
+                                        i++;
+                                    }
+                                    break;
+                            }
+                            if (objectLabel == detectLabels[0]) {
                                 parkingTarget = 1;
-                            } else if (objectLabel == "2 Bulb") {
+                            } else if (objectLabel == detectLabels[1]) {
                                 parkingTarget = 2;
-                            } else if (objectLabel == "3 Panel") {
+                            } else if (objectLabel == detectLabels[2]) {
                                 parkingTarget = 3;
                             }
 
