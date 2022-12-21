@@ -451,7 +451,7 @@ public class Robot {
     }
 
 
-    float modAngle(float angle) {
+    public float modAngle(float angle) {
         angle = angle % 360;
         if (angle < 0) {
             angle += 360;

@@ -18,14 +18,21 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "Auto Test", group = "Concept")
 public class Auto extends LinearOpMode {
 
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-    // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
+    private static final String tfodModel = "playPower.tflite";
+    private static final String tfodPath = "/sdcard/FIRST/tflitemodels/" + tfodModel;
 
     private static final String[] LABELS = {
             "1 Bolt",
             "2 Bulb",
             "3 Panel"
     };
+    final String[] vortexLabels = {
+            "VO",
+            "RT",
+            "EX"
+    };
+
+
     private static final String VUFORIA_KEY =
             "AWtcstb/////AAABmfYaB2Q4dURcmKS8qV2asrhnGIuQxM/ioq6TnYqZseP/c52ZaYTjs4/2xhW/91XEaX7c3aw74P3kGZybIaXued3nGShb7oNQyRkVePnFYbabnU/G8em37JQrH309U1zOYtM3bEhRej91Sq6cf6yLjiSXJ+DxxLtSgWvO5f+wM3Wny8MbGUpVSiogYnI7UxEz8OY88d+hgal9u3GhhISdnNucsL+fRAE8mKwT1jGDgUVE1uAJoZFvo95AJWS2Yhdq/N/HpxEH3sBXEm99ci+mdQsl0m96PMCDfV5RgWBjhLbBEIJyQ/xKAbw5Yfr/AKCeB86WDPhR3+Mr8BUvsrycZA6FDJnN5sZZwTg0ZE22+gFL";
     private VuforiaLocalizer vuforia;
@@ -84,12 +91,28 @@ public class Auto extends LinearOpMode {
                             double width = Math.abs(recognition.getRight() - recognition.getLeft());
                             double height = Math.abs(recognition.getTop() - recognition.getBottom());
                             String objectLabel = recognition.getLabel();
+                            String[] detectLabels = new String[2];
+                            int i = 0;
+                            switch(tfodModel) {
+                                case "modelvortex.tflite":
+                                    for (String label : vortexLabels) {
+                                        detectLabels[i] = label;
+                                        i++;
+                                    }
+                                    break;
 
-                            if (objectLabel == "1 Bolt") {
+                                case "playPower.tflite":
+                                    for (String label : LABELS) {
+                                        detectLabels[i] = label;
+                                        i++;
+                                    }
+                                    break;
+                            }
+                            if (objectLabel == detectLabels[0]) {
                                 parkingTarget = 1;
-                            } else if (objectLabel == "2 Bulb") {
+                            } else if (objectLabel == detectLabels[1]) {
                                 parkingTarget = 2;
-                            } else if (objectLabel == "3 Panel") {
+                            } else if (objectLabel == detectLabels[2]) {
                                 parkingTarget = 3;
                             }
                             telemetry.addData("", " ");
@@ -163,22 +186,55 @@ public class Auto extends LinearOpMode {
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        switch(tfodModel) {
+            case "modelvortex.tflite":
+                tfod.loadModelFromFile(tfodPath, vortexLabels);
+                break;
+            case "playPower.tflite":
+                tfod.loadModelFromFile(tfodPath, LABELS);
+            default:
+                //    throw new Error("That isn't a valid TFLite model. Maybe check if it's uploaded, or if you made a typo?");
+        }
         // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 
     private void Park(int location) {
-        if (location == 1) {
-            robot.DriveToPosition(0.3, 30, 0);
-        }
+        switch(parkingTarget) {
+            case 1:
+                runtime.reset();
+                timeout_ms = 3000;
+                robot.Drive(0.3, 90);
+                while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                robot.stopDriveMotors();
+                sleep(100);
 
-        if (location == 2) {
-            robot.DriveToPosition(0.3, -30, 0);
-        }
+                runtime.reset();
+                timeout_ms = 3000;
+                robot.Strafe(0.3, -60);
+                while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                robot.stopDriveMotors();
+                break;
+            case 2:
+                runtime.reset();
+                timeout_ms = 3000;
+                robot.Drive(0.3, 90);
+                while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                robot.stopDriveMotors();
+                break;
+            case 3:
+                runtime.reset();
+                timeout_ms = 3000;
+                robot.Drive(0.3, 90);
+                while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                robot.stopDriveMotors();
+                sleep(100);
 
-        if (location == 3) {
-            robot.DriveToPosition(0.3, -95, 0);
-
+                runtime.reset();
+                timeout_ms = 3000;
+                robot.Strafe(0.3, 60);
+                while (opModeIsActive() && (runtime.milliseconds() < timeout_ms) && (robot.FLMotor.isBusy() && robot.FRMotor.isBusy())) {}
+                robot.stopDriveMotors();
+                break;
         }
     }
 }
