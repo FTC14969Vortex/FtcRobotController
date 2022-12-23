@@ -44,7 +44,7 @@ public class Vuforia extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-    private static final String tfodModel = "playPower.tflite";
+    private static final String tfodModel = "dec2022Junction.tflite";
     private static final String tfodPath = "/sdcard/FIRST/tflitemodels/" + tfodModel;
 
 
@@ -57,6 +57,12 @@ public class Vuforia extends LinearOpMode {
             "1 Bolt",
             "2 Bulb",
             "3 Panel"
+    };
+    final String[] dec2022LABELS = {
+            "arrow",
+            "balloons",
+            "bars",
+            "pole"
     };
 
     /*
@@ -139,7 +145,7 @@ public class Vuforia extends LinearOpMode {
                             double width = Math.abs(recognition.getRight() - recognition.getLeft());
                             double height = Math.abs(recognition.getTop() - recognition.getBottom());
                             String objectLabel = recognition.getLabel();
-                            String[] detectLabels = new String[2];
+                            String[] detectLabels = new String[3];
                             int i = 0;
                             switch(tfodModel) {
                                 case "modelvortex.tflite":
@@ -155,13 +161,17 @@ public class Vuforia extends LinearOpMode {
                                         i++;
                                     }
                                     break;
+                                case "dec2022Junction.tflite":
+                                for (String label : dec2022LABELS) {
+                                    detectLabels[i] = label;
+                                    i++;
+                                }
+                                break;
                             }
-                            if (objectLabel == detectLabels[0]) {
-                                parkingTarget = 1;
-                            } else if (objectLabel == detectLabels[1]) {
-                                parkingTarget = 2;
-                            } else if (objectLabel == detectLabels[2]) {
-                                parkingTarget = 3;
+                            for(int j = 0; j < 3; j++) {
+                                if (objectLabel == detectLabels[j]) {
+                                    parkingTarget = j + 1;
+                                }
                             }
 
                             telemetry.addData("", " ");
@@ -256,6 +266,9 @@ public class Vuforia extends LinearOpMode {
                 break;
             case "playPower.tflite":
                 tfod.loadModelFromFile(tfodPath, LABELS);
+                break;
+            case "dec2022Junction.tflite":
+                tfod.loadModelFromFile(tfodPath,dec2022LABELS);
             default:
             //    throw new Error("That isn't a valid TFLite model. Maybe check if it's uploaded, or if you made a typo?");
         }
