@@ -269,6 +269,7 @@ public class Vuforia extends LinearOpMode {
                 break;
             case "dec2022Junction.tflite":
                 tfod.loadModelFromFile(tfodPath,dec2022LABELS);
+                break;
             default:
             //    throw new Error("That isn't a valid TFLite model. Maybe check if it's uploaded, or if you made a typo?");
         }
