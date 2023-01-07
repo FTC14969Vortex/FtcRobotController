@@ -44,7 +44,7 @@ public class Vuforia extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-    private static final String tfodModel = "dec2022Junction.tflite";
+    private static final String tfodModel = "jan2022polesAndSignals.tflite";
     private static final String tfodPath = "/sdcard/FIRST/tflitemodels/" + tfodModel;
 
 
@@ -58,7 +58,7 @@ public class Vuforia extends LinearOpMode {
             "2 Bulb",
             "3 Panel"
     };
-    final String[] dec2022LABELS = {
+    final String[] poleLABELS = {
             "arrow",
             "balloons",
             "bars",
@@ -162,7 +162,8 @@ public class Vuforia extends LinearOpMode {
                                     }
                                     break;
                                 case "dec2022Junction.tflite":
-                                for (String label : dec2022LABELS) {
+                                case "jan2022polesandsignals.tflite":
+                                    for (String label : poleLABELS) {
                                     detectLabels[i] = label;
                                     i++;
                                 }
@@ -268,7 +269,8 @@ public class Vuforia extends LinearOpMode {
                 tfod.loadModelFromFile(tfodPath, LABELS);
                 break;
             case "dec2022Junction.tflite":
-                tfod.loadModelFromFile(tfodPath,dec2022LABELS);
+            case "jan2022polesAndSignals.tflite":
+                tfod.loadModelFromFile(tfodPath,poleLABELS);
                 break;
             default:
             //    throw new Error("That isn't a valid TFLite model. Maybe check if it's uploaded, or if you made a typo?");
