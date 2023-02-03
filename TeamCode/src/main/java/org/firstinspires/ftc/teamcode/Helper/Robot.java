@@ -81,21 +81,21 @@ public class Robot {
 
 
     // TFOD and Vuforia properties related to vision.
-//    private static final String tfodModel = "jan2023mk2";
-//    private static final String tfodPath = "/sdcard/FIRST/tflitemodels/" + tfodModel + ".tflite";
-//    public static final String[] LABELS = {
-//            "arrow",
-//            "balloon",
-//            "bar",
-//            "pole",
-//    };
-
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    private static final String tfodModel = "jan2023mk4";
+    private static final String tfodPath = "/sdcard/FIRST/tflitemodels/" + tfodModel + ".tflite";
     public static final String[] LABELS = {
-            "1 Bolt",
-            "2 Bulb",
-            "3 Panel"
+            "arrow",
+            "balloon",
+            "bar",
+            "pole",
     };
+
+   // private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    //public static final String[] LABELS = {
+    //        "1 Bolt",
+    //        "2 Bulb",
+   //         "3 Panel"
+    //};
 
     private static final String VUFORIA_KEY =
             "AWtcstb/////AAABmfYaB2Q4dURcmKS8qV2asrhnGIuQxM/ioq6TnYqZseP/c52ZaYTjs4/2xhW/91XEaX7c3aw74P3kGZybIaXued3nGShb7oNQyRkVePnFYbabnU/G8em37JQrH309U1zOYtM3bEhRej91Sq6cf6yLjiSXJ+DxxLtSgWvO5f+wM3Wny8MbGUpVSiogYnI7UxEz8OY88d+hgal9u3GhhISdnNucsL+fRAE8mKwT1jGDgUVE1uAJoZFvo95AJWS2Yhdq/N/HpxEH3sBXEm99ci+mdQsl0m96PMCDfV5RgWBjhLbBEIJyQ/xKAbw5Yfr/AKCeB86WDPhR3+Mr8BUvsrycZA6FDJnN5sZZwTg0ZE22+gFL";
@@ -112,9 +112,7 @@ public class Robot {
 
 
     //
-    public void Robot() {
-
-    }
+    public void Robot() {}
 
 
     //private static LinearOpmode opModeObj;
@@ -236,8 +234,8 @@ public class Robot {
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        // this.tfod.loadModelFromFile(tfodPath, LABELS);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        this.tfod.loadModelFromFile(tfodPath, LABELS);
+        //tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
 
 
         if (tfod != null) {
