@@ -6,7 +6,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.Helper.Robot;
+import org.firstinspires.ftc.teamcode.OpModes.ReadCSV;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Autonomous(name = "PlantWatering", group = "Auto")
@@ -25,8 +27,9 @@ public class PlantWatering extends LinearOpMode {
         if(robot.tfod != null) {
             telemetry.addLine("Tfod Initialized");
         }
-        robot.initArmClaw();
 
+        String plantCoordinates = Arrays.toString(ReadCSV.PlantCoordinate);
+        telemetry.addData("Plant coordinates", plantCoordinates);
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
