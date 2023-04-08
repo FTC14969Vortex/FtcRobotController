@@ -47,6 +47,8 @@ public class PlantWatering extends LinearOpMode {
                         // Note: "Image number" refers to the randomized image orientation/number
                         for (Recognition recognition : updatedRecognitions) {
                             String objectLabel = recognition.getLabel();
+                            float leftCoordinate = recognition.getLeft();
+                            telemetry.addData("Left Coordinate", leftCoordinate);
                         }
                         telemetry.update();
                     }
