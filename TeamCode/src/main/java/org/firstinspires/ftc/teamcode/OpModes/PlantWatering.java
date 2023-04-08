@@ -18,6 +18,12 @@ public class PlantWatering extends LinearOpMode {
     double timeout_ms = 0;
     Robot robot = new Robot();
 
+    public enum AutoSteps {
+        moveToPlant, deliverWater
+    }
+
+    public AutoSteps Steps = AutoSteps.moveToPlant;
+
     public void runOpMode() throws InterruptedException {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
@@ -49,7 +55,8 @@ public class PlantWatering extends LinearOpMode {
                         // step through the list of recognitions and display image position/size information for each one
                         // Note: "Image number" refers to the randomized image orientation/number
                         for (Recognition recognition : updatedRecognitions) {
-                            String objectLabel = recognition.getLabel();
+                            float leftCoordinate = recognition.getLeft();
+                            telemetry.addData("Left Coordinate", leftCoordinate);
                         }
                         telemetry.update();
                     }

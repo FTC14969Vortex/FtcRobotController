@@ -32,11 +32,11 @@ public class Robot {
 
     private int robotInUse = 2022;
 
-    private static final String tfodModel = "test";
-    private static final String tfodPath = "/sdcard/FIRST/tflitemodels/test.tflite";
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     public static final String[] LABELS = {
-            "Shashvat",
-            "Neel"
+            "Arrows",
+            "Balloons",
+            "Bars"
     };
 
     private static final String VUFORIA_KEY =
@@ -98,7 +98,7 @@ public class Robot {
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
         // chassis.tfod.loadModelFromFile(tfodPath, LABELS);
-        tfod.loadModelFromFile(tfodPath, LABELS);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
 
 
         if (tfod != null) {
