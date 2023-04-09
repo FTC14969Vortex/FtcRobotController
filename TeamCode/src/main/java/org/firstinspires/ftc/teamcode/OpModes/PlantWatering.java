@@ -19,10 +19,11 @@ public class PlantWatering extends LinearOpMode {
     Robot robot = new Robot();
 
     public enum AutoSteps {
-        moveToPlant, deliverWater
+        moveToPlant, deliverWater, goBackToStart, endAuto
     }
 
     public AutoSteps Steps = AutoSteps.moveToPlant;
+    double wheelToTubeDist = 8;
 
     public void runOpMode() throws InterruptedException {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
@@ -30,12 +31,8 @@ public class PlantWatering extends LinearOpMode {
         robot.init(hardwareMap);
         robot.initVuforia();
         robot.initTfod();
-        if(robot.tfod != null) {
-            telemetry.addLine("Tfod Initialized");
-        }
 
-        String plantCoordinates = Arrays.toString(ReadCSV.PlantCoordinate);
-        telemetry.addData("Plant coordinates", plantCoordinates);
+        telemetry.addData("Plant coordinates", Arrays.toString(ReadCSV.PlantCoordinate));
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
@@ -45,7 +42,6 @@ public class PlantWatering extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
                 if (robot.tfod != null) {
-                    telemetry.addLine("Tfod Loaded");
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = robot.tfod.getUpdatedRecognitions();
@@ -60,6 +56,30 @@ public class PlantWatering extends LinearOpMode {
                         }
                         telemetry.update();
                     }
+                }
+
+                switch (Steps) {
+                    case moveToPlant:
+                        robot.chassis.DriveToPosition(0.25,ReadCSV.x_distance, (int) (ReadCSV.y_distance - wheelToTubeDist),true);
+                        robot.chassis.DriveToPosition(0.25,0, 5,true);
+                        Steps = AutoSteps.deliverWater;
+                        break;
+
+                    case deliverWater:
+                        robot.claw.servo.setPosition(0);
+                        sleep(3000);
+                        robot.claw.servo.setPosition(1);
+                        sleep(2000);
+                        Steps = AutoSteps.goBackToStart;
+                        break;
+                    case goBackToStart:
+                        robot.chassis.DriveToPosition(0.25,-ReadCSV.x_distance,-ReadCSV.y_distance,true);
+                        Steps = AutoSteps.endAuto;
+                        break;
+                    case endAuto:
+                        telemetry.addData("➡️", "Auto Finished");
+                        telemetry.update();
+                        break;
                 }
             }
         }
