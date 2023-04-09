@@ -10,19 +10,20 @@ import org.firstinspires.ftc.teamcode.Helper.Robot;
 import java.util.Arrays;
 import java.util.List;
 
-@Autonomous(name = "PlantWatering", group = "Auto")
+@Autonomous(name = "Plant Watering Multi", group = "Auto")
 
-public class PlantWatering extends LinearOpMode {
+public class PlantWateringMultiple extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     double timeout_ms = 0;
     Robot robot = new Robot();
 
     public enum AutoSteps {
-        moveToPlant, deliverWater, goBackToStart, endAuto
+        moveToPlant1, deliverWaterTo1, moveToPlant2, deliverWater, goBackToStart, endAuto
     }
 
-    public AutoSteps Steps = AutoSteps.moveToPlant;
+    public AutoSteps Steps = AutoSteps.moveToPlant1;
     double wheelToTubeDist = 8;
+    public int currentPlant;
 
     public void runOpMode() throws InterruptedException {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
@@ -56,9 +57,10 @@ public class PlantWatering extends LinearOpMode {
                 }
 
                 switch (Steps) {
-                    case moveToPlant:
+                    case moveToPlant1:
                         robot.chassis.DriveToPosition(0.25,ReadCSV.plant1_x_distance, (int) (ReadCSV.plant1_y_distance - wheelToTubeDist),true);
                         robot.chassis.DriveToPosition(0.25,0, 5,true);
+                        currentPlant = 1;
                         Steps = AutoSteps.deliverWater;
                         break;
 
@@ -67,9 +69,23 @@ public class PlantWatering extends LinearOpMode {
                         sleep(3000);
                         robot.claw.servo.setPosition(1);
                         sleep(2000);
-                        Steps = AutoSteps.goBackToStart;
+
+                        if(currentPlant == 1) {
+                          Steps = AutoSteps.moveToPlant2;
+                        } else if(currentPlant == 2) {
+                            Steps = AutoSteps.goBackToStart;
+                        }
                         break;
+
+                    case moveToPlant2:
+
+                        robot.chassis.DriveToPosition(0.25,ReadCSV.plant2_x_distance, (int) (ReadCSV.plant2_y_distance - wheelToTubeDist),true);
+                        robot.chassis.DriveToPosition(0.25,0, 5,true);
+                        Steps = AutoSteps.deliverWater;
+                        break;
+
                     case goBackToStart:
+                        robot.chassis.DriveToPosition(0.25,-ReadCSV.plant2_x_distance,-ReadCSV.plant2_y_distance,true);
                         robot.chassis.DriveToPosition(0.25,-ReadCSV.plant1_x_distance,-ReadCSV.plant1_y_distance,true);
                         Steps = AutoSteps.endAuto;
                         break;

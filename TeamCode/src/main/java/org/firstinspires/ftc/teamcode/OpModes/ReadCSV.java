@@ -1,28 +1,20 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import java.io.InputStream;
-import java.util.Arrays;
 
 @Autonomous(name = "ReadCSV", group = "Auto")
 
 public class ReadCSV extends LinearOpMode{
-    public static int x_distance = 60;
-    public static int y_distance = 30;
-    public static int plantHeight;
-    public static String plantType;
-    public static int[] PlantCoordinate = { x_distance, y_distance };
-    public static String[] values;
-    public static String line;
+    public static int plant1_x_distance = 60;
+    public static int plant1_y_distance = 30;
+
+    public static int plant2_x_distance = 60;
+    public static int plant2_y_distance = 30;
+//    public static int plantHeight;
+//    public static String plantType;
+////    public static int[] PlantCoordinate = {plant1_x_distance, plant1_y_distance};
+//    public static String line;
 
 //    public static void UseValues(String[] val) {
 //        x_distance = Integer.parseInt(val[0]);
@@ -56,12 +48,5 @@ public class ReadCSV extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
         waitForStart();
-
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
-                telemetry.addData(">", line);
-                telemetry.update();
-            }
-        }
     }
 }
