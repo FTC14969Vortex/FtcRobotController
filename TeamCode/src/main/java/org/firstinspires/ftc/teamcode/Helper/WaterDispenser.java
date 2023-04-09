@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.Helper;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Claw {
+public class WaterDispenser {
     public Servo servo;
 
     public double OPEN = 0.8;

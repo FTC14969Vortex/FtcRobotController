@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.Helper;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 //Related to IMU
-
-import java.util.*;
 
 // Related to vision
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -23,7 +20,7 @@ public class Robot {
     private ElapsedTime runtime = new ElapsedTime();
     double timeout_ms = 0;
 
-    public Claw claw = new Claw();
+    public WaterDispenser claw = new WaterDispenser();
     public Arm arm = new Arm();
     public Chassis chassis = new Chassis();
     public VSlider vSlider = new VSlider();

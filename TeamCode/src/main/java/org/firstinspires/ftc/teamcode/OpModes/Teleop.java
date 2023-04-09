@@ -97,7 +97,7 @@ public class Teleop extends LinearOpMode {
                 robot.vSlider.motor.setPower(vSliderPower);
 
 
-                // Claw
+                // WaterDispenser
                 if (gamepad2.x) {
                     robot.claw.close();
                 }
@@ -131,7 +131,7 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("vSliderPower", robot.vSlider.motor.getPower());
             telemetry.addData("vSlider Encoder", robot.vSlider.motor.getCurrentPosition());
             telemetry.addData("swingArm Encoder", robot.arm.motor.getCurrentPosition());
-            telemetry.addData("Claw Position", robot.claw.servo.getPosition());
+            telemetry.addData("WaterDispenser Position", robot.claw.servo.getPosition());
             org.firstinspires.ftc.robotcore.external.navigation.Orientation angle;
             angle = robot.chassis.imu.getAngularOrientation();
             telemetry.addData("Angular Orientation", angle);
