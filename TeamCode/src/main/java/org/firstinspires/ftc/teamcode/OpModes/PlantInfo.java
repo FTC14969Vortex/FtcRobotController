@@ -3,14 +3,15 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "ReadCSV", group = "Auto")
+@Autonomous(name = "Plant Info", group = "Auto")
 
-public class ReadCSV extends LinearOpMode{
+public class PlantInfo extends LinearOpMode{
     public static int plant1_x_distance = 60;
     public static int plant1_y_distance = 30;
 
-    public static int plant2_x_distance = 60;
-    public static int plant2_y_distance = 30;
+    public static int plant2_x_distance = -163;
+    public static int plant2_y_distance = -5;
+
 //    public static int plantHeight;
 //    public static String plantType;
 ////    public static int[] PlantCoordinate = {plant1_x_distance, plant1_y_distance};
