@@ -31,9 +31,9 @@ public class AutoLeft extends LinearOpMode {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         robot.init(hardwareMap);
-        robot.initVuforia();
-        robot.initTfod();
-        robot.initArmClaw();
+        //robot.initVuforia();
+       // robot.initTfod();
+       // robot.initArmClaw();
 
 
         /** Wait for the game to begin */
@@ -77,12 +77,12 @@ public class AutoLeft extends LinearOpMode {
                         break;
                 // Deliver preload and park.
                     case deliverPreLoad:
-                        robot.deliverPreLoad(true);
+                        //robot.deliverPreLoad(true);
                         Step = AutoSteps.parkFromMedium;
                         break;
 
                     case parkFromMedium:
-                        robot.ParkFromMedium(parkingTarget, true, true);
+                        //robot.ParkFromMedium(parkingTarget, true, true);
                         Step = AutoSteps.endAuto;
                         break;
 

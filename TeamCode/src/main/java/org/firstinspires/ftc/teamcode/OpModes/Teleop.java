@@ -28,7 +28,7 @@ public class Teleop extends LinearOpMode {
     public double fr_power = 0;
     public double br_power = 0;
 
-    public double DRIVETRAIN_SPEED = 0.7;
+    public double DRIVETRAIN_SPEED = 1;
 
 
 
@@ -88,22 +88,22 @@ public class Teleop extends LinearOpMode {
                 /**
                  * Joystick controls for slider, arm, and claw.
                  */
+//
+//                double vSliderPower = -gamepad2.left_stick_y;
+//                if (vSliderPower < 0 && robot.vSlider.motor.getCurrentPosition() < 0) {
+//                    vSliderPower = 0;
+//                }
 
-                double vSliderPower = -gamepad2.left_stick_y;
-                if (vSliderPower < 0 && robot.vSlider.motor.getCurrentPosition() < 0) {
-                    vSliderPower = 0;
-                }
-
-                robot.vSlider.motor.setPower(vSliderPower);
+               // robot.vSlider.motor.setPower(vSliderPower);
 
 
                 // Claw
-                if (gamepad2.x) {
-                    robot.claw.close();
-                }
-                if (gamepad2.y) {
-                    robot.claw.open();
-                }
+//                if (gamepad2.x) {
+//                    robot.claw.close();
+//                }
+//                if (gamepad2.y) {
+//                    robot.claw.open();
+//                }
 
                 // Arm
                 //if (gamepad2.right_bumper) {
@@ -119,24 +119,24 @@ public class Teleop extends LinearOpMode {
 
             else {
                 robot.chassis.stopDriveMotors();
-                robot.vSlider.motor.setPower(0);
-                robot.arm.motor.setPower(0);
-                robot.claw.open();
+//                robot.vSlider.motor.setPower(0);
+//                robot.arm.motor.setPower(0);
+//                robot.claw.open();
             }
 
             telemetry.addData("FL Motor Encoder", robot.chassis.FLMotor.getCurrentPosition());
             telemetry.addData("BL Motor Encoder", robot.chassis.BLMotor.getCurrentPosition());
             telemetry.addData("BR Motor Encoder", robot.chassis.BRMotor.getCurrentPosition());
             telemetry.addData("FR Motor Encoder", robot.chassis.FRMotor.getCurrentPosition());
-            telemetry.addData("vSliderPower", robot.vSlider.motor.getPower());
-            telemetry.addData("vSlider Encoder", robot.vSlider.motor.getCurrentPosition());
-            telemetry.addData("swingArm Encoder", robot.arm.motor.getCurrentPosition());
-            telemetry.addData("Claw Position", robot.claw.servo.getPosition());
-            org.firstinspires.ftc.robotcore.external.navigation.Orientation angle;
-            angle = robot.chassis.imu.getAngularOrientation();
-            telemetry.addData("Angular Orientation", angle);
-            int angleFloat = (int) (robot.modAngle(angle.firstAngle));
-            telemetry.addData("Orientation in 0-360", angleFloat);
+//            telemetry.addData("vSliderPower", robot.vSlider.motor.getPower());
+//            telemetry.addData("vSlider Encoder", robot.vSlider.motor.getCurrentPosition());
+//            telemetry.addData("swingArm Encoder", robot.arm.motor.getCurrentPosition());
+//            telemetry.addData("Claw Position", robot.claw.servo.getPosition());
+//            org.firstinspires.ftc.robotcore.external.navigation.Orientation angle;
+//            angle = robot.chassis.imu.getAngularOrientation();
+//            telemetry.addData("Angular Orientation", angle);
+            //int angleFloat = (int) (robot.modAngle(angle.firstAngle));
+            //telemetry.addData("Orientation in 0-360", angleFloat);
             telemetry.addData("Robot Location", "(" + robot.chassis.robotX + ", " + robot.chassis.robotY + ")");
             telemetry.addData("IsRobotStable", robot.chassis.isRobotStable());
 

@@ -31,9 +31,9 @@ public class AutoPark extends LinearOpMode {
         // Following order is important.
 
         robot.init(hardwareMap);
-        robot.initVuforia();
-        robot.initTfod();
-        robot.initArmClaw();
+       // robot.initVuforia();
+       // robot.initTfod();
+        //robot.initArmClaw();
 
 
 
@@ -105,7 +105,7 @@ public class AutoPark extends LinearOpMode {
 //                        break;
 
                     case park:
-                        robot.Park(parkingTarget);
+                       // robot.Park(parkingTarget);
                         Step = AutoSteps.endAuto;
                         break;
 
